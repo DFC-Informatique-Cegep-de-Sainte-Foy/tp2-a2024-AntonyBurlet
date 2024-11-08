@@ -42,24 +42,65 @@ namespace TP2
         #endregion
 
         public static int GetSuitFromCardIndex(int index)
-        {
-            // PROF : À COMPLETER. Le code ci-après est incorrect
-            return 0;
+        {           
+            return index / NUM_CARDS_PER_SUIT;
         }
+
         public static int GetValueFromCardIndex(int index)
         {
-            // PROF : À COMPLETER. Le code ci-après est incorrect
-            return 0;
+            return index % NUM_CARDS_PER_SUIT;
         }
 
         public static void DrawFaces(int[] cardValues, bool[] selectedCards, bool[] availableCards)
         {
-            // PROF : À COMPLETER.
+            int randomCardIndex;
+
+            for (int i = 0; i < selectedCards.Length; i++)
+            {
+                if (!selectedCards[i])
+                {
+                    //Draw une carte
+                    do
+                    {
+                        randomCardIndex = new Random().Next(0, NUM_CARDS);
+                    } while (!availableCards[randomCardIndex]);
+
+                    cardValues[i] = randomCardIndex;
+                    availableCards[randomCardIndex] = false;
+                }
+            }
+
+            //On remet les cartes dans le deck fonction ???
+            for (int i = 0;i < availableCards.Length;i++)
+            {
+                if (!availableCards[i])
+                {
+                    if (!cardValues.Contains(i))
+                    {
+                        availableCards[i] = true;
+                    }
+                }
+            }
         }
         public static int GetScoreFromCardValue(int cardValue)
         {
-            // PROF : À COMPLETER. Le code ci-après est incorrect
-            return 0;
+            int cardScore;
+            cardValue = cardValue % NUM_CARDS_PER_SUIT;
+
+            if (cardValue == ACE)
+            {
+                cardScore = ACES_SCORE;
+            }
+            else if (cardValue < JACK)
+            {
+                cardScore = cardValue + 1;
+            }
+            else
+            {
+                cardScore = FACES_SCORE;
+            }
+
+            return cardScore;
         }
 
         public static int GetHandScore(int[] cardIndexes)
@@ -77,13 +118,64 @@ namespace TP2
         // de tests avec vos noms de fonctions).
 
 
+        public static int GetHighestCardValue(int[] values)
+        {
+            int highestCardValue = 0;
+            int highestCardScore = 0;
 
+            for (int i = 0; i < values.Length; i++)
+            {
+                if(highestCardScore < GetScoreFromCardValue(values[i])) 
+                {
+                    highestCardValue = values[i];
+                    highestCardScore = GetScoreFromCardValue(values[i]);
+                }
+            }
 
+            return highestCardValue;
+        }
+
+        public static bool HasOnlySameColorCards(int[] suits)
+        {
+
+            return false;
+        }
 
         public static void ShowScore(int[] cardIndexes)
         {
             int hand = GetHandScore(cardIndexes);
             Display.WriteString($"Votre score est de : {hand}", 0, Display.CARD_HEIGHT + 14, ConsoleColor.Black);
+        }
+
+
+        public static bool HasAllSameCardValues(int[] values)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static bool HasAllFaces(int[] values)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static bool HasOnlyFaces(int[] values)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static bool HasSameColorSequence(int[] values, int[] suits)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static bool HasSequence(int[] values)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static int GetScoreFromMultipleCardsOfASuit(int suit, int[] values, int[] suits)
+        {
+            throw new NotImplementedException();
         }
     }
 }
