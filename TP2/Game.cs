@@ -105,18 +105,52 @@ namespace TP2
 
         public static int GetHandScore(int[] cardIndexes)
         {
-            // PROF : À COMPLETER. Le code ci-après est incorrect
-            return 0;
+            int handScore = 0;
+
+            int[] suits = new int[cardIndexes.Length];
+            for (int i = 0; i < cardIndexes.Length; i++)
+            {
+                suits[i] = GetSuitFromCardIndex(cardIndexes[i]);
+            }
+
+            if (HasAllSameCardValues(cardIndexes))
+            {
+                handScore = ALL_SAME_CARDS_VALUE_SCORE;
+            }
+            else
+            {
+                if (HasOnlyFaces(cardIndexes))
+                {
+                    handScore = ONLY_FACES_SCORE;
+
+                    if (HasAllFaces(cardIndexes))
+                    {
+                        handScore = ALL_FACES_SCORE;
+                    }
+                }
+                else if (HasOnlySameColorCards(suits))
+                {
+                    handScore = SAME_COLOR_SCORE;
+
+                    if (HasSameColorSequence(cardIndexes, suits))
+                    {
+                        handScore = SAME_COLOR_SEQUENCE_SCORE;
+                    }
+                }
+            }
+
+            for(int i = 0; i < CLUB; i++)
+            {
+                if(handScore < GetScoreFromMultipleCardsOfASuit(
+                    i, cardIndexes, suits))
+                {
+                    handScore = GetScoreFromMultipleCardsOfASuit(
+                    i, cardIndexes, suits);
+                }
+            }
+
+            return handScore;
         }
-
-        // A COMPLETER
-        // ...
-        // Il manque toutes les méthodes pour trouver les différentes combinaisons.
-        // Référez-vous aux tests pour les noms de fonctions appropriés.
-        // ATTENTION! Suivez bien les noms dans les tests, car je vais utiliser mon propre fichier
-        // (qui est exactement comme le vôtre, mais vous ne pourrez pas me faire parvenir un fichier
-        // de tests avec vos noms de fonctions).
-
 
         public static int GetHighestCardValue(int[] values)
         {
@@ -137,8 +171,31 @@ namespace TP2
 
         public static bool HasOnlySameColorCards(int[] suits)
         {
+            bool hasRedCard = false;
+            bool hasBlackCard = false;
 
-            return false;
+            for (int i = 0; i < suits.Length; i++)
+            {
+                if(suits[i] == HEART || suits[i] == DIAMOND)
+                {
+                    hasRedCard = true;
+                }
+                else if (suits[i] == SPADE || suits[i] == CLUB)
+                {
+                    hasBlackCard = true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            if(hasBlackCard && hasRedCard)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public static void ShowScore(int[] cardIndexes)
@@ -150,32 +207,116 @@ namespace TP2
 
         public static bool HasAllSameCardValues(int[] values)
         {
-            throw new NotImplementedException();
+            int firstValue = values[0];
+
+            for(int i = 1; i < values.Length; i++)
+            {
+                if(values[i] != firstValue)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         public static bool HasAllFaces(int[] values)
         {
-            throw new NotImplementedException();
+            if (HasOnlyFaces(values))
+            {
+                if (HasSequence(values))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public static bool HasOnlyFaces(int[] values)
         {
-            throw new NotImplementedException();
+            for (int i = 0; i < values.Length; i++)
+            {
+                if (values[i] < JACK || values[i] > KING)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         public static bool HasSameColorSequence(int[] values, int[] suits)
         {
-            throw new NotImplementedException();
+            if (HasOnlySameColorCards(suits))
+            {
+                if (HasSequence(values))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public static bool HasSequence(int[] values)
         {
-            throw new NotImplementedException();
+            values = PutValuesInOrder(values);
+            int precedantValue = values[0];
+
+            for (int i = 1; i < values.Length; i++)
+            {
+                if (values[i] == precedantValue + 1)
+                {
+                    precedantValue++;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         public static int GetScoreFromMultipleCardsOfASuit(int suit, int[] values, int[] suits)
         {
-            throw new NotImplementedException();
+            int suitScore = 0;
+
+            for(int i = 0;i < values.Length;i++)
+            {
+                if (suit == suits[i])
+                {
+                    suitScore += GetScoreFromCardValue(values[i]);
+                }
+            }
+
+            return suitScore;
+        }
+
+        public static int[] PutValuesInOrder(int[] values)
+        {
+            bool arrayChanged;
+            int temp;
+
+            for (int i = 0; i < values.Length - 1; i++)
+            {
+                arrayChanged = false;
+                for (int j = 0; j < values.Length - 1 - i; j++)
+                {
+                    if (values[j] > values[j + 1])
+                    {
+                        temp = values[j];
+                        values[j] = values[j + 1];
+                        values[j + 1] = temp;
+                        arrayChanged = true;
+                    }
+                }
+
+                if (!arrayChanged)
+                {
+                    break;
+                }
+            }
+
+            return values;
         }
     }
 }
